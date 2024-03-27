@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "golly"
+version = "0.1.0"
+description = ""
+authors = ["JesseHoekman <jessehoekman@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyqt5 = "=5.15.10"   
+pyqt5-qt5 = "=5.15.2"
+pyqtgraph = "0.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
