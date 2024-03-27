@@ -1,36 +1,46 @@
 
 import numpy as np 
 import tkinter as tk
-class GameOfLife:
+
+class Rules:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.current_grid, self.next_grid = self.initialize_grids(rows, cols)
+        # Generate the initial state with the specified probabilities
+        self.current_state = np.random.choice([0, 1], size=(rows, cols), p=[0.95, 0.05])
+        self.next_state = np.random.choice([0, 1], size=(rows, cols), p=[0.95, 0.05])
 
-    def initialize_grids(self, rows, cols):
-        current_grid = np.random.randint(2, size=(rows, cols))
-        next_grid = np.random.randint(1, size=(rows, cols))
-        return current_grid, next_grid
-
-
-    def count_alive(grid, x, y):
+    def count_alive(self, x, y):
         neighbors = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i == 0 and j == 0:
                     continue
-                if 0<= x+i < len(grid) and 0 <= y+j < len(grid[0]) and grid[x+i][y+j] == 1:
+                if 0 <= x+i < self.rows and 0 <= y+j < self.cols and self.current_state[x+i][y+j] == 1:
                     neighbors += 1
         return neighbors
 
-    def game_step(current_state, next_state):
-        for x in range(len(current_state)):
-            for y in range (len(current_state[0])):
-                alive_neighbors = count_alive(current_state, x, y)
-                if current_state[x][y] == 1 and alive_neighbors in (2,3):
-                    next_state[x][y] = 1
-                elif current_state[x][y] == 0 and alive_neighbors == 3:
-                    next_state[x][y] = 1            
+    def game_step(self):
+        for x in range(self.rows):
+            for y in range (self.cols):
+                self.alive_neighbors = self.count_alive(x, y)
+                if self.current_state[x][y] == 1 and self.alive_neighbors in (2,3):
+                    self.next_state[x][y] = 1
+                elif self.current_state[x][y] == 0 and self.alive_neighbors == 3:
+                    self.next_state[x][y] = 1            
                 else:
-                    next_state[x][y] = 0
-        return current_state, next_state
+                    self.next_state[x][y] = 0
+        self.current_state, self.next_state = self.next_state, self.current_state  
+
+    def run_iterations(self, iterations):
+        iteration_count = [0]
+
+        def step():
+            if iteration_count[0] < iterations:
+                next_state, current_state = game_step(current_state, next_state)
+                iteration_count[0] += 1
+                field.after(delay, step)
+            else:
+                print("Simulation complete.")
+
+        step()
